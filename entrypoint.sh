@@ -1,20 +1,38 @@
 #!/bin/bash
 
+NETWORK=""
+PROGRAM=""
+ARGS=""
+
 # Decide network
 
-NETWORK=$1
 if [[ $@ == *"network=mainnet"* ]]; then
     NETWORK=mainnet
-    NODE_ARGS="${@//network=mainnet/}"
+    ARGS="${@//network=mainnet/}"
 elif [[ $@ == *"network=devnet"* ]]; then
     NETWORK=devnet
-    NODE_ARGS="${@//network=devnet/}"
+    ARGS="${@//network=devnet/}"
 else
     echo "Error: unknown network switch." 1>&2
     exit 1
 fi
 
 echo "Network: ${NETWORK}"
+
+# Decide program to run
+
+if [[ $@ == *"start-observer"* ]]; then
+    PROGRAM=/elrond/node
+    ARGS="${@//start-observer/}"
+elif [[ $@ == *"start-rosetta"* ]]; then
+    PROGRAM=/elrond/rosetta
+    ARGS="${@//start-rosetta/}"
+else
+    echo "Error: unknown program." 1>&2
+    exit 1
+fi
+
+echo "Program: ${PROGRAM}"
 
 # Create observer key (if missing)
 
@@ -46,5 +64,5 @@ fi
 
 # Run the main process (Node)
 
-echo "Node command-line arguments: ${NODE_ARGS}"
-exec /elrond/node ${NODE_ARGS}
+echo "Node command-line arguments: ${ARGS}"
+exec ${PROGRAM} ${ARGS}
