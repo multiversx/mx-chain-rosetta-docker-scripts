@@ -2,20 +2,20 @@
 
 NETWORK=""
 PROGRAM=""
-ARGS=""
+ARGS=$@
 
 # Decide program to run
 if [[ $@ == *"start-observer"* ]]; then
     PROGRAM=/elrond/node
-    ARGS="${@//start-observer/}"
+    ARGS="${ARGS//start-observer/}"
 
     # For Node, decide network
     if [[ $@ == *"network=mainnet"* ]]; then
         NETWORK=mainnet
-        ARGS="${@//network=mainnet/}"
+        ARGS="${ARGS//network=mainnet/}"
     elif [[ $@ == *"network=devnet"* ]]; then
         NETWORK=devnet
-        ARGS="${@//network=devnet/}"
+        ARGS="${ARGS//network=devnet/}"
     else
         echo "Error: unknown network switch." 1>&2
         exit 1
@@ -49,7 +49,7 @@ if [[ $@ == *"start-observer"* ]]; then
     fi
 elif [[ $@ == *"start-rosetta"* ]]; then
     PROGRAM=/elrond/rosetta
-    ARGS="${@//start-rosetta/}"
+    ARGS="${ARGS//start-rosetta/}"
 else
     echo "Error: unknown program." 1>&2
     exit 1
