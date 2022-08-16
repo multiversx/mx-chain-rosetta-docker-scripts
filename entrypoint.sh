@@ -16,6 +16,9 @@ if [[ $@ == *"start-observer"* ]]; then
     elif [[ $@ == *"network=devnet"* ]]; then
         NETWORK=devnet
         ARGS="${ARGS//network=devnet/}"
+    elif [[ $@ == *"network=testnet"* ]]; then
+        NETWORK=testnet
+        ARGS="${ARGS//network=testnet/}"
     else
         echo "Error: unknown network switch." 1>&2
         exit 1
@@ -38,6 +41,8 @@ if [[ $@ == *"start-observer"* ]]; then
         ln -sf /elrond/config-mainnet /elrond/config
     elif [ "$NETWORK" == "devnet" ]; then
         ln -sf /elrond/config-devnet /elrond/config
+    elif [ "$NETWORK" == "testnet" ]; then
+        ln -sf /elrond/config-testnet /elrond/config
     fi
 
     echo "Created symlink to config folder."
