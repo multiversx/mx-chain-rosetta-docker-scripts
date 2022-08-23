@@ -30,6 +30,8 @@ def main(cli_args: List[str]):
         data["DbLookupExtensions"]["Enabled"] = True
         data["Antiflood"]["WebServer"]["SimultaneousRequests"] = 512
         data["StateTriesConfig"]["AccountsStatePruningEnabled"] = False
+        data["StoragePruning"]["AccountsTrieCleanOldEpochsData"] = False
+        data["StoragePruning"]["NumEpochsToKeep"] = 128
     elif mode == MODE_PREFS:
         data["Preferences"]["FullArchive"] = True
     else:
