@@ -32,10 +32,10 @@ def main(cli_args: List[str]):
     if mode == MODE_MAIN:
         data["GeneralSettings"]["StartInEpochEnabled"] = False
         data["DbLookupExtensions"]["Enabled"] = True
-        data["Antiflood"]["WebServer"]["SimultaneousRequests"] = api_simultaneous_requests
         data["StateTriesConfig"]["AccountsStatePruningEnabled"] = False
         data["StoragePruning"]["AccountsTrieCleanOldEpochsData"] = False
         data["StoragePruning"]["NumEpochsToKeep"] = num_epochs_to_keep
+        data["Antiflood"]["WebServer"]["SimultaneousRequests"] = api_simultaneous_requests
     elif mode == MODE_PREFS:
         data["Preferences"]["FullArchive"] = True
     else:
