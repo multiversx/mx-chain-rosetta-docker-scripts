@@ -18,20 +18,24 @@ def main(cli_args: List[str]):
     parser = ArgumentParser()
     parser.add_argument("--mode", choices=MODES, required=True)
     parser.add_argument("--file", required=True)
+    parser.add_argument("--api-simultaneous-requests", type=int, default=512)
+    parser.add_argument("--num-epochs-to-keep", type=int, default=128)
 
     parsed_args = parser.parse_args(cli_args)
     mode = parsed_args.mode
     file = parsed_args.file
+    api_simultaneous_requests = parsed_args.api_simultaneous_requests
+    num_epochs_to_keep = parsed_args.num_epochs_to_keep
 
     data = toml.load(file)
 
     if mode == MODE_MAIN:
         data["GeneralSettings"]["StartInEpochEnabled"] = False
         data["DbLookupExtensions"]["Enabled"] = True
-        data["Antiflood"]["WebServer"]["SimultaneousRequests"] = 512
+        data["Antiflood"]["WebServer"]["SimultaneousRequests"] = api_simultaneous_requests
         data["StateTriesConfig"]["AccountsStatePruningEnabled"] = False
         data["StoragePruning"]["AccountsTrieCleanOldEpochsData"] = False
-        data["StoragePruning"]["NumEpochsToKeep"] = 128
+        data["StoragePruning"]["NumEpochsToKeep"] = num_epochs_to_keep
     elif mode == MODE_PREFS:
         data["Preferences"]["FullArchive"] = True
     else:
