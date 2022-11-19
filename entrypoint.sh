@@ -6,7 +6,6 @@ ARGS=$@
 
 # Decide program to run
 if [[ $@ == *"start-observer"* ]]; then
-    PROGRAM=/elrond/node
     ARGS="${ARGS//start-observer/}"
 
     # For Node, decide network
@@ -36,16 +35,17 @@ if [[ $@ == *"start-observer"* ]]; then
         echo "Observer key already existing."
     fi
 
-    # For Node, symlink config (mainnet vs. devnet)
+    # For Node, decide executable and export LD_LIBRARY_PATH (mainnet vs. devnet vs. testnet)
     if [ "$NETWORK" == "mainnet" ]; then
-        ln -sf /elrond/config-mainnet /elrond/config
+        PROGRAM=/elrond/mainnet/node
+        export LD_LIBRARY_PATH=/elrond/mainnet
     elif [ "$NETWORK" == "devnet" ]; then
-        ln -sf /elrond/config-devnet /elrond/config
+        PROGRAM=/elrond/devnet/node
+        export LD_LIBRARY_PATH=/elrond/devnet
     elif [ "$NETWORK" == "testnet" ]; then
-        ln -sf /elrond/config-testnet /elrond/config
+        PROGRAM=/elrond/testnet/node
+        export LD_LIBRARY_PATH=/elrond/testnet
     fi
-
-    echo "Created symlink to config folder."
 
     # For Node, check existence of /data/db
     if [ ! -d "/data/db" ]; then
@@ -63,4 +63,5 @@ fi
 # Run the main process:
 echo "Program: ${PROGRAM}"
 echo "Command-line arguments: ${ARGS}"
+echo "LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}"
 exec ${PROGRAM} ${ARGS}
