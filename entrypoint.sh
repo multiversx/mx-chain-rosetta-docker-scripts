@@ -6,7 +6,7 @@ ARGS=$@
 
 # Decide program to run
 if [[ $@ == *"start-observer"* ]]; then
-    PROGRAM=/elrond/node
+    PROGRAM=/multiversx/node
     ARGS="${ARGS//start-observer/}"
 
     # For Node, decide network
@@ -29,7 +29,7 @@ if [[ $@ == *"start-observer"* ]]; then
     # For Node, create observer key (if missing)
     if [ ! -f "/data/observerKey.pem" ]
     then
-        /elrond/keygenerator
+        /multiversx/keygenerator
         mv ./validatorKey.pem /data/observerKey.pem
         echo "Created observer key."
     else
@@ -38,11 +38,11 @@ if [[ $@ == *"start-observer"* ]]; then
 
     # For Node, symlink config (mainnet vs. devnet)
     if [ "$NETWORK" == "mainnet" ]; then
-        ln -sf /elrond/config-mainnet /elrond/config
+        ln -sf /multiversx/config-mainnet /multiversx/config
     elif [ "$NETWORK" == "devnet" ]; then
-        ln -sf /elrond/config-devnet /elrond/config
+        ln -sf /multiversx/config-devnet /multiversx/config
     elif [ "$NETWORK" == "testnet" ]; then
-        ln -sf /elrond/config-testnet /elrond/config
+        ln -sf /multiversx/config-testnet /multiversx/config
     fi
 
     echo "Created symlink to config folder."
@@ -53,7 +53,7 @@ if [[ $@ == *"start-observer"* ]]; then
         exit 1
     fi
 elif [[ $@ == *"start-rosetta"* ]]; then
-    PROGRAM=/elrond/rosetta
+    PROGRAM=/multiversx/rosetta
     ARGS="${ARGS//start-rosetta/}"
 else
     echo "Error: unknown program." 1>&2
