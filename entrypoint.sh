@@ -35,17 +35,10 @@ if [[ $@ == *"start-observer"* ]]; then
         echo "Observer key already existing."
     fi
 
-    # For Node, decide executable and export LD_LIBRARY_PATH (mainnet vs. devnet vs. testnet)
-    if [ "$NETWORK" == "mainnet" ]; then
-        PROGRAM=/elrond/mainnet/node
-        export LD_LIBRARY_PATH=/elrond/mainnet
-    elif [ "$NETWORK" == "devnet" ]; then
-        PROGRAM=/elrond/devnet/node
-        export LD_LIBRARY_PATH=/elrond/devnet
-    elif [ "$NETWORK" == "testnet" ]; then
-        PROGRAM=/elrond/testnet/node
-        export LD_LIBRARY_PATH=/elrond/testnet
-    fi
+    # For Node, decide current directory, executable and export LD_LIBRARY_PATH (mainnet vs. devnet vs. testnet)
+    DIRECTORY=/elrond/${NETWORK}
+    PROGRAM=${DIRECTORY}/node
+    export LD_LIBRARY_PATH=${DIRECTORY}
 
     # For Node, check existence of /data/db
     if [ ! -d "/data/db" ]; then
@@ -53,7 +46,8 @@ if [[ $@ == *"start-observer"* ]]; then
         exit 1
     fi
 elif [[ $@ == *"start-rosetta"* ]]; then
-    PROGRAM=/elrond/rosetta
+    DIRECTORY=/elrond
+    PROGRAM=${DIRECTORY}/rosetta
     ARGS="${ARGS//start-rosetta/}"
 else
     echo "Error: unknown program." 1>&2
@@ -61,6 +55,7 @@ else
 fi
 
 # Run the main process:
+cd ${DIRECTORY}
 echo "Program: ${PROGRAM}"
 echo "Command-line arguments: ${ARGS}"
 echo "LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}"
