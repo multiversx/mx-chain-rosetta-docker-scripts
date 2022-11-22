@@ -5,8 +5,8 @@ from typing import List
 import toml
 
 """
-python3 ./docker/adjust_config.py --mode=main --file=/go/elrond-config-devnet/config.toml
-python3 ./docker/adjust_config.py --mode=prefs --file=/go/elrond-config-devnet/prefs.toml
+python3 adjust_config.py --mode=main --file=config.toml
+python3 adjust_config.py --mode=prefs --file=prefs.toml
 """
 
 MODE_MAIN = "main"
