@@ -21,9 +21,14 @@ downloadDataIfNecessary() {
 
     is_data_downloaded_marker_file=is_downloaded.txt
 
-    if [[ -f $used_external_snapshot_flag ]]; then
+    if [[ -f $is_data_downloaded_marker_file ]]; then
         echo "Blockchain database already downloaded. Skipping ..."
         return
+    fi
+
+    if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} && -n ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+        echo "No download specified."
+        return 1
     fi
 
     if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} ]]; then
@@ -48,7 +53,7 @@ downloadRegularArchive() {
     fi
 
     echo "Downloading ${REGULAR_ARCHIVE_URL} ..."
-    wget -c -O archive.tar.gz "${REGULAR_ARCHIVE_URL}" || return 1
+    wget -O archive.tar.gz "${REGULAR_ARCHIVE_URL}" || return 1
 
     echo "Extracting archive ..."
     tar -xzf archive.tar.gz || return 1
@@ -82,7 +87,7 @@ downloadNonPrunedEpochs() {
 
     mkdir -p db/${CHAIN_ID}
 
-    echo "Downloading Static.rar ..."
+    echo "Downloading Static.tar ..."
     wget ${NON_PRUNED_URL_BASE}/Static.tar || return 1
 
     for (( epoch = ${EPOCH_FIRST}; epoch <= ${EPOCH_LAST}; epoch++ ))
@@ -91,10 +96,10 @@ downloadNonPrunedEpochs() {
         wget ${NON_PRUNED_URL_BASE}/Epoch_${epoch}.tar || return 1
     done
 
-    echo "Extracting Static.rar"
+    echo "Extracting Static.tar"
     tar -xf Static.tar --directory db/${CHAIN_ID} || return 1
 
-    echo "Removing Static.rar"
+    echo "Removing Static.tar"
     rm Static.tar
 
     for (( epoch = ${EPOCH_FIRST}; epoch <= ${EPOCH_LAST}; epoch++ ))
