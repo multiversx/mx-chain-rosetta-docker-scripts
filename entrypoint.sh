@@ -40,11 +40,11 @@ downloadDataIfNecessary() {
         return
     fi
 
-    if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} ]]; then
+    if [[ "${DOWNLOAD_REGULAR_ARCHIVE}" = true ]]; then
         downloadRegularArchive || return 1
     fi
 
-    if [[ -n ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+    if [[ "${DOWNLOAD_NON_PRUNED_EPOCHS}" = true ]]; then
         downloadNonPrunedEpochs || return 1
     fi
 
