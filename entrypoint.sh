@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ARGS=$@
-### FIX VAR NAMES_ prepend download!!!
+
 echo "Setup entrypoint ..."
 
 if [[ ${NETWORK} != "mainnet" && ${NETWORK} != "devnet" ]]; then
