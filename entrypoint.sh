@@ -5,12 +5,12 @@ ARGS=$@
 echo "Setup entrypoint ..."
 
 if [[ ${NETWORK} != "mainnet" && ${NETWORK} != "devnet" ]]; then
-    echo "Error: NETWORK isn't set. Should be 'mainnet' or 'devnet'."
+    echo "Error: NETWORK isn't set. Should be 'mainnet' or 'devnet'." 1>&2
     exit 1
 fi
 
 if [[ ${PROGRAM} != "node" && ${PROGRAM} != "rosetta" ]]; then
-    echo "Error: PROGRAM isn't set. Should be 'node' or 'rosetta'."
+    echo "Error: PROGRAM isn't set. Should be 'node' or 'rosetta'." 1>&2
     exit 1
 fi
 
@@ -31,7 +31,7 @@ downloadDataIfNecessary() {
     fi
 
     if [[ "${DOWNLOAD_REGULAR_ARCHIVE}" = true ]] && [[ "${DOWNLOAD_NON_PRUNED_EPOCHS}" = true ]]; then
-        echo "Error: DOWNLOAD_REGULAR_ARCHIVE and DOWNLOAD_NON_PRUNED_EPOCHS are mutually exclusive."
+        echo "Error: DOWNLOAD_REGULAR_ARCHIVE and DOWNLOAD_NON_PRUNED_EPOCHS are mutually exclusive." 1>&2
         return 1
     fi
 
@@ -60,7 +60,7 @@ downloadRegularArchive() {
     echo "Download regular archive ..."
 
     if [[ -z "${DOWNLOAD_REGULAR_ARCHIVE_URL}" ]]; then
-        echo "Error: DOWNLOAD_REGULAR_ARCHIVE_URL (commonly referred as the 'snapshot archive url') isn't set."
+        echo "Error: DOWNLOAD_REGULAR_ARCHIVE_URL (commonly referred as the 'snapshot archive url') isn't set." 1>&2
         return 1
     fi
 
@@ -77,22 +77,22 @@ downloadNonPrunedEpochs() {
     echo "Download non-pruned epochs ..."
 
     if [[ -z "${DOWNLOAD_CHAIN_ID}" ]]; then
-        echo "Error: DOWNLOAD_CHAIN_ID isn't set. Should be '1' or 'D'."
+        echo "Error: DOWNLOAD_CHAIN_ID isn't set. Should be '1' or 'D'." 1>&2
         return 1
     fi
 
     if [[ -z "${DOWNLOAD_NON_PRUNED_EPOCHS_URL}" ]]; then
-        echo "Error: DOWNLOAD_NON_PRUNED_EPOCHS_URL isn't set."
+        echo "Error: DOWNLOAD_NON_PRUNED_EPOCHS_URL isn't set." 1>&2
         return 1
     fi
 
     if [[ -z "${DOWNLOAD_EPOCH_FIRST}" ]]; then
-        echo "Error: DOWNLOAD_EPOCH_FIRST isn't set. Set it to <desired starting epoch for historical state lookup> - 3."
+        echo "Error: DOWNLOAD_EPOCH_FIRST isn't set. Set it to <desired starting epoch for historical state lookup> - 3." 1>&2
         return 1
     fi
 
     if [[ -z "${DOWNLOAD_EPOCH_LAST}" ]]; then
-        echo "Error: DOWNLOAD_EPOCH_LAST isn't set."
+        echo "Error: DOWNLOAD_EPOCH_LAST isn't set." 1>&2
         return 1
     fi
 
@@ -133,7 +133,15 @@ if [[ ${PROGRAM} == "node" ]]; then
 
     # Check existence of /data/db
     if [ ! -d "/data/db" ]; then
-        echo "Error: make sure the directory /data/db exists and contains a (recent) blockchain archive." 1>&2
+        echo "Error: make sure the directory /data/db exists." 1>&2
+        exit 1
+    fi
+
+    DATABASE_SIZE=$(du -sb /data/db | cut -f1)
+
+    # Check size of /data/db
+    if [[ $DATABASE_SIZE -lt 1048576 ]]; then
+        echo "Error: make sure the directory /data/db contains a (recent) blockchain archive." 1>&2
         exit 1
     fi
 fi
