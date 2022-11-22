@@ -19,6 +19,8 @@ echo "PROGRAM: ${PROGRAM}"
 echo "PROGRAM arguments: ${ARGS}"
 
 downloadDataIfNecessary() {
+    echo "Download data if necessary ..."
+    
     cd /data
 
     is_data_downloaded_marker_file=is_downloaded.txt
@@ -55,6 +57,8 @@ downloadDataIfNecessary() {
 # - epoch 0 -> latest (recent) epoch: without support (pruned state)
 # - latest (recent) epoch -> future: with support (as state isn't pruned anymore)
 downloadRegularArchive() {
+    echo "Download regular archive ..."
+
     if [[ -z "${REGULAR_ARCHIVE_URL}" ]]; then
         echo "Error: REGULAR_ARCHIVE_URL (commonly referred as the 'snapshot archive url') isn't set."
         return 1
@@ -73,6 +77,8 @@ downloadRegularArchive() {
 # Download a set of epochs with non-pruned state (with support for historical state lookup).
 # Make sure to download 3 epoch archives older than the desired "starting point" for historical state lookup.
 downloadNonPrunedEpochs() {
+    echo "Download non-pruned epochs ..."
+
     if [[ -z "${CHAIN_ID}" ]]; then
         echo "Error: CHAIN_ID isn't set. Should be '1' or 'D'."
         return 1
