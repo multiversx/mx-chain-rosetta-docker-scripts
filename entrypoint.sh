@@ -139,7 +139,7 @@ if [[ ${PROGRAM} == "node" ]]; then
 
     DATABASE_SIZE=$(du -sb /data/db | cut -f1)
 
-    # Check size of /data/db
+    # Check size of /data/db (check against a trivial size)
     if [[ $DATABASE_SIZE -lt 1048576 ]]; then
         echo "Error: make sure the directory /data/db contains a (recent) blockchain archive." 1>&2
         exit 1
