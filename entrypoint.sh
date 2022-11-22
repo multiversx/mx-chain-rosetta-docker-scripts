@@ -69,9 +69,6 @@ downloadRegularArchive() {
 
     echo "Extracting archive ..."
     tar -xzf archive.tar.gz || return 1
-
-    echo "Removing archive ..."
-    rm archive.tar.gz
 }
 
 # Download a set of epochs with non-pruned state (with support for historical state lookup).
@@ -113,16 +110,10 @@ downloadNonPrunedEpochs() {
     echo "Extracting Static.tar"
     tar -xf Static.tar --directory db/${DOWNLOAD_CHAIN_ID} || return 1
 
-    echo "Removing Static.tar"
-    rm Static.tar
-
     for (( epoch = ${DOWNLOAD_EPOCH_FIRST}; epoch <= ${DOWNLOAD_EPOCH_LAST}; epoch++ ))
     do
         echo "Extracting Epoch_${epoch}.tar"
         tar -xf Epoch_${epoch}.tar --directory db/${DOWNLOAD_CHAIN_ID} || return 1
-
-        echo "Removing Epoch_${epoch}.tar"
-        rm Epoch_${epoch}.tar
     done
 }
 
