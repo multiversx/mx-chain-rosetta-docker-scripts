@@ -2,6 +2,8 @@
 
 ARGS=$@
 
+echo "Setup entrypoint ..."
+
 if [[ ${NETWORK} != "mainnet" && ${NETWORK} != "devnet" ]]; then
     echo "Error: NETWORK isn't set. Should be 'mainnet' or 'devnet'."
     exit 1
@@ -17,6 +19,8 @@ echo "PROGRAM: ${PROGRAM}"
 echo "PROGRAM arguments: ${ARGS}"
 
 downloadDataIfNecessary() {
+    echo "Download data if necessary ..."
+
     cd /data
 
     is_data_downloaded_marker_file=is_downloaded.txt
@@ -26,9 +30,14 @@ downloadDataIfNecessary() {
         return
     fi
 
-    if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} && -n ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
-        echo "No download specified."
+    if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} ]] && [[ -n ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+        echo "Error: DOWNLOAD_REGULAR_ARCHIVE and DOWNLOAD_NON_PRUNED_EPOCHS are mutually exclusive."
         return 1
+    fi
+
+    if [[ -z ${DOWNLOAD_REGULAR_ARCHIVE} ]] && [[ -z ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+        echo "No download specified."
+        return
     fi
 
     if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} ]]; then
@@ -39,6 +48,7 @@ downloadDataIfNecessary() {
         downloadNonPrunedEpochs || return 1
     fi
 
+    echo "Creating 'data downloaded' marker file ..."
     touch $is_data_downloaded_marker_file
 }
 
@@ -47,68 +57,63 @@ downloadDataIfNecessary() {
 # - epoch 0 -> latest (recent) epoch: without support (pruned state)
 # - latest (recent) epoch -> future: with support (as state isn't pruned anymore)
 downloadRegularArchive() {
-    if [[ -z "${REGULAR_ARCHIVE_URL}" ]]; then
-        echo "Error: REGULAR_ARCHIVE_URL (commonly referred as the 'snapshot archive url') isn't set."
+    echo "Download regular archive ..."
+
+    if [[ -z "${DOWNLOAD_REGULAR_ARCHIVE_URL}" ]]; then
+        echo "Error: DOWNLOAD_REGULAR_ARCHIVE_URL (commonly referred as the 'snapshot archive url') isn't set."
         return 1
     fi
 
-    echo "Downloading ${REGULAR_ARCHIVE_URL} ..."
-    wget -O archive.tar.gz "${REGULAR_ARCHIVE_URL}" || return 1
+    echo "Downloading ${DOWNLOAD_REGULAR_ARCHIVE_URL} ..."
+    wget -O archive.tar.gz "${DOWNLOAD_REGULAR_ARCHIVE_URL}" || return 1
 
     echo "Extracting archive ..."
     tar -xzf archive.tar.gz || return 1
-
-    echo "Removing archive ..."
-    rm archive.tar.gz
 }
 
 # Download a set of epochs with non-pruned state (with support for historical state lookup).
 # Make sure to download 3 epoch archives older than the desired "starting point" for historical state lookup.
 downloadNonPrunedEpochs() {
-    if [[ -z "${CHAIN_ID}" ]]; then
-        echo "Error: CHAIN_ID isn't set. Should be '1' or 'D'."
+    echo "Download non-pruned epochs ..."
+
+    if [[ -z "${DOWNLOAD_CHAIN_ID}" ]]; then
+        echo "Error: DOWNLOAD_CHAIN_ID isn't set. Should be '1' or 'D'."
         return 1
     fi
 
-    if [[ -z "${NON_PRUNED_URL_BASE}" ]]; then
-        echo "Error: NON_PRUNED_URL_BASE isn't set."
+    if [[ -z "${DOWNLOAD_NON_PRUNED_EPOCHS_URL}" ]]; then
+        echo "Error: DOWNLOAD_NON_PRUNED_EPOCHS_URL isn't set."
         return 1
     fi
 
-    if [[ -z "${EPOCH_FIRST}" ]]; then
-        echo "Error: EPOCH_FIRST isn't set. Set it to <desired starting epoch for historical state lookup> - 3."
+    if [[ -z "${DOWNLOAD_EPOCH_FIRST}" ]]; then
+        echo "Error: DOWNLOAD_EPOCH_FIRST isn't set. Set it to <desired starting epoch for historical state lookup> - 3."
         return 1
     fi
 
-    if [[ -z "${EPOCH_LAST}" ]]; then
-        echo "Error: EPOCH_LAST isn't set."
+    if [[ -z "${DOWNLOAD_EPOCH_LAST}" ]]; then
+        echo "Error: DOWNLOAD_EPOCH_LAST isn't set."
         return 1
     fi
 
-    mkdir -p db/${CHAIN_ID}
+    mkdir -p db/${DOWNLOAD_CHAIN_ID}
 
     echo "Downloading Static.tar ..."
-    wget ${NON_PRUNED_URL_BASE}/Static.tar || return 1
+    wget ${DOWNLOAD_NON_PRUNED_EPOCHS_URL}/Static.tar || return 1
 
-    for (( epoch = ${EPOCH_FIRST}; epoch <= ${EPOCH_LAST}; epoch++ ))
+    for (( epoch = ${DOWNLOAD_EPOCH_FIRST}; epoch <= ${DOWNLOAD_EPOCH_LAST}; epoch++ ))
     do
         echo "Downloading Epoch_${epoch}.tar ..."
-        wget ${NON_PRUNED_URL_BASE}/Epoch_${epoch}.tar || return 1
+        wget ${DOWNLOAD_NON_PRUNED_EPOCHS_URL}/Epoch_${epoch}.tar || return 1
     done
 
     echo "Extracting Static.tar"
-    tar -xf Static.tar --directory db/${CHAIN_ID} || return 1
+    tar -xf Static.tar --directory db/${DOWNLOAD_CHAIN_ID} || return 1
 
-    echo "Removing Static.tar"
-    rm Static.tar
-
-    for (( epoch = ${EPOCH_FIRST}; epoch <= ${EPOCH_LAST}; epoch++ ))
+    for (( epoch = ${DOWNLOAD_EPOCH_FIRST}; epoch <= ${DOWNLOAD_EPOCH_LAST}; epoch++ ))
     do
         echo "Extracting Epoch_${epoch}.tar"
-        tar -xf Epoch_${epoch}.tar --directory db/${CHAIN_ID} || return 1
-
-        echo "Removing Epoch_${epoch}.tar"
-        rm Epoch_${epoch}.tar
+        tar -xf Epoch_${epoch}.tar --directory db/${DOWNLOAD_CHAIN_ID} || return 1
     done
 }
 
@@ -128,7 +133,7 @@ if [[ ${PROGRAM} == "node" ]]; then
 
     # Check existence of /data/db
     if [ ! -d "/data/db" ]; then
-        echo "Make sure the directory /data/db exists and contains a (recent) blockchain archive." 1>&2
+        echo "Error: make sure the directory /data/db exists and contains a (recent) blockchain archive." 1>&2
         exit 1
     fi
 fi
