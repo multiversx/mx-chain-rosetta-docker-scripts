@@ -30,12 +30,12 @@ downloadDataIfNecessary() {
         return
     fi
 
-    if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} ]] && [[ -n ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+    if [[ "${DOWNLOAD_REGULAR_ARCHIVE}" = true ]] && [[ "${DOWNLOAD_NON_PRUNED_EPOCHS}" = true ]]; then
         echo "Error: DOWNLOAD_REGULAR_ARCHIVE and DOWNLOAD_NON_PRUNED_EPOCHS are mutually exclusive."
         return 1
     fi
 
-    if [[ -z ${DOWNLOAD_REGULAR_ARCHIVE} ]] && [[ -z ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+    if [[ "${DOWNLOAD_REGULAR_ARCHIVE}" = false ]] && [[ "${DOWNLOAD_NON_PRUNED_EPOCHS}" = false ]]; then
         echo "No download specified."
         return
     fi
