@@ -2,6 +2,8 @@
 
 ARGS=$@
 
+echo "Setup entrypoint ..."
+
 if [[ ${NETWORK} != "mainnet" && ${NETWORK} != "devnet" ]]; then
     echo "Error: NETWORK isn't set. Should be 'mainnet' or 'devnet'."
     exit 1
@@ -26,9 +28,14 @@ downloadDataIfNecessary() {
         return
     fi
 
-    if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} && -n ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
-        echo "No download specified."
+    if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} ]] && [[ -n ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+        echo "Error: DOWNLOAD_REGULAR_ARCHIVE and DOWNLOAD_NON_PRUNED_EPOCHS are mutually exclusive."
         return 1
+    fi
+
+    if [[ -z ${DOWNLOAD_REGULAR_ARCHIVE} ]] && [[ -z ${DOWNLOAD_NON_PRUNED_EPOCHS} ]]; then
+        echo "No download specified."
+        return
     fi
 
     if [[ -n ${DOWNLOAD_REGULAR_ARCHIVE} ]]; then
@@ -39,6 +46,7 @@ downloadDataIfNecessary() {
         downloadNonPrunedEpochs || return 1
     fi
 
+    echo "Creating 'data downloaded' marker file ..."
     touch $is_data_downloaded_marker_file
 }
 
@@ -128,7 +136,7 @@ if [[ ${PROGRAM} == "node" ]]; then
 
     # Check existence of /data/db
     if [ ! -d "/data/db" ]; then
-        echo "Make sure the directory /data/db exists and contains a (recent) blockchain archive." 1>&2
+        echo "Error: make sure the directory /data/db exists and contains a (recent) blockchain archive." 1>&2
         exit 1
     fi
 fi
