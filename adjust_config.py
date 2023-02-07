@@ -33,7 +33,7 @@ def main(cli_args: List[str]):
         data["StateTriesConfig"]["AccountsStatePruningEnabled"] = False
         data["StoragePruning"]["ObserverCleanOldEpochsData"] = False
         data["StoragePruning"]["AccountsTrieCleanOldEpochsData"] = False
-        data["Antiflood"]["WebServer"]["SimultaneousRequests"] = api_simultaneous_requests
+        data["WebServerAntiflood"]["SimultaneousRequests"] = api_simultaneous_requests
     elif mode == MODE_PREFS:
         data["Preferences"]["FullArchive"] = True
     else:
