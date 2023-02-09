@@ -119,16 +119,6 @@ downloadNonPrunedEpochs() {
 
 # For Node (observer), perform additional steps
 if [[ ${PROGRAM} == "node" ]]; then
-    # Create observer key (if missing)
-    if [ ! -f "/data/observerKey.pem" ]
-    then
-        /app/keygenerator || exit 1
-        mv ./validatorKey.pem /data/observerKey.pem || exit 1
-        echo "Created observer key."
-    else
-        echo "Observer key already existing."
-    fi
-
     downloadDataIfNecessary || exit 1
 
     # Check existence of /data/db
