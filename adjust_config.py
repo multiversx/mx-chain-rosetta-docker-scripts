@@ -19,11 +19,14 @@ def main(cli_args: List[str]):
     parser.add_argument("--mode", choices=MODES, required=True)
     parser.add_argument("--file", required=True)
     parser.add_argument("--api-simultaneous-requests", type=int, default=16384)
+    parser.add_argument("--no-snapshots", action="store_true", default=False)
 
     parsed_args = parser.parse_args(cli_args)
     mode = parsed_args.mode
     file = parsed_args.file
     api_simultaneous_requests = parsed_args.api_simultaneous_requests
+    no_snapshots = parsed_args.no_snapshots
+    snapshots_enabled = not no_snapshots
 
     data = toml.load(file)
 
@@ -31,6 +34,7 @@ def main(cli_args: List[str]):
         data["GeneralSettings"]["StartInEpochEnabled"] = False
         data["DbLookupExtensions"]["Enabled"] = True
         data["StateTriesConfig"]["AccountsStatePruningEnabled"] = False
+        data["StateTriesConfig"]["SnapshotsEnabled"] = snapshots_enabled
         data["StoragePruning"]["ObserverCleanOldEpochsData"] = False
         data["StoragePruning"]["AccountsTrieCleanOldEpochsData"] = False
         data["WebServerAntiflood"]["SimultaneousRequests"] = api_simultaneous_requests
