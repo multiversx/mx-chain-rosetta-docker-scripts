@@ -65,10 +65,10 @@ downloadRegularArchive() {
     fi
 
     echo "Downloading ${DOWNLOAD_REGULAR_ARCHIVE_URL} ..."
-    wget -O archive.tar.gz "${DOWNLOAD_REGULAR_ARCHIVE_URL}" || return 1
+    wget -O archive "${DOWNLOAD_REGULAR_ARCHIVE_URL}" || return 1
 
     echo "Extracting archive ..."
-    tar -xzf archive.tar.gz || return 1
+    tar -xf archive || return 1
 }
 
 # Download a set of epochs with non-pruned state (with support for historical state lookup).
