@@ -17,7 +17,7 @@ def main(cli_args: List[str]):
     src = parsed_args.src
     max_header_requests_allowed = parsed_args.max_header_requests_allowed
 
-    replace_line_in_file(src / "process" / "constants.go", "MaxHeaderRequestsAllowed = 20", f"MaxHeaderRequestsAllowed = {max_header_requests_allowed}")
+    replace_line_in_file(src / "process" / "constants.go", "const MaxHeaderRequestsAllowed = 20", f"const MaxHeaderRequestsAllowed = {max_header_requests_allowed}")
 
 
 def replace_line_in_file(file: Path, old: str, new: str):
