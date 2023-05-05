@@ -11,13 +11,13 @@ python3 adjust_observer_src.py --src=...
 def main(cli_args: List[str]):
     parser = ArgumentParser()
     parser.add_argument("--src", type=Path, required=True)
-    parser.add_argument("--max-header-requests-allowed", type=int, default=20)
+    parser.add_argument("--max-headers-to-request-in-advance", type=int, default=20)
 
     parsed_args = parser.parse_args(cli_args)
     src = parsed_args.src
-    max_header_requests_allowed = parsed_args.max_header_requests_allowed
+    max_headers_to_request_in_advance = parsed_args.max_headers_to_request_in_advance
 
-    replace_line_in_file(src / "process" / "constants.go", "const MaxHeaderRequestsAllowed = 20", f"const MaxHeaderRequestsAllowed = {max_header_requests_allowed}")
+    replace_line_in_file(src / "process" / "constants.go", "const MaxHeadersToRequestInAdvance = 20", f"const MaxHeadersToRequestInAdvance = {max_headers_to_request_in_advance}")
 
 
 def replace_line_in_file(file: Path, old: str, new: str):
