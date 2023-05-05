@@ -20,6 +20,7 @@ def main(cli_args: List[str]):
     parser.add_argument("--file", required=True)
     parser.add_argument("--api-simultaneous-requests", type=int, default=16384)
     parser.add_argument("--no-snapshots", action="store_true", default=False)
+    parser.add_argument("--sync-process-time-milliseconds", type=int, default=12000)
 
     parsed_args = parser.parse_args(cli_args)
     mode = parsed_args.mode
@@ -27,11 +28,13 @@ def main(cli_args: List[str]):
     api_simultaneous_requests = parsed_args.api_simultaneous_requests
     no_snapshots = parsed_args.no_snapshots
     snapshots_enabled = not no_snapshots
+    sync_process_time_milliseconds = parsed_args.sync_process_time_milliseconds
 
     data = toml.load(file)
 
     if mode == MODE_MAIN:
         data["GeneralSettings"]["StartInEpochEnabled"] = False
+        data["GeneralSettings"]["SyncProcessTimeInMillis"] = sync_process_time_milliseconds
         data["DbLookupExtensions"]["Enabled"] = True
         data["StateTriesConfig"]["AccountsStatePruningEnabled"] = False
         data["StateTriesConfig"]["SnapshotsEnabled"] = snapshots_enabled
