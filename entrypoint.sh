@@ -119,20 +119,28 @@ downloadNonPrunedEpochs() {
 
 # For Node (observer), perform additional steps
 if [[ ${PROGRAM} == "node" ]]; then
-    downloadDataIfNecessary || exit 1
+    if [[ "${IS_GENESIS}" = true ]]; then
+        # Check non-existence of /data/db
+        if [ -d "/data/db" ]; then
+            echo "Error: since IS_GENESIS is set, make sure the directory /data/db does not exist." 1>&2
+            exit 1
+        fi
+    else
+        downloadDataIfNecessary || exit 1
 
-    # Check existence of /data/db
-    if [ ! -d "/data/db" ]; then
-        echo "Error: make sure the directory /data/db exists." 1>&2
-        exit 1
-    fi
+        # Check existence of /data/db
+        if [ ! -d "/data/db" ]; then
+            echo "Error: make sure the directory /data/db exists." 1>&2
+            exit 1
+        fi
 
-    DATABASE_SIZE=$(du -sb /data/db | cut -f1)
+        DATABASE_SIZE=$(du -sb /data/db | cut -f1)
 
-    # Check size of /data/db (check against a trivial size)
-    if [[ $DATABASE_SIZE -lt 1048576 ]]; then
-        echo "Error: make sure the directory /data/db contains a (recent) blockchain archive." 1>&2
-        exit 1
+        # Check size of /data/db (check against a trivial size)
+        if [[ $DATABASE_SIZE -lt 40960 ]]; then
+            echo "Error: make sure the directory /data/db contains a (recent) blockchain archive." 1>&2
+            exit 1
+        fi  
     fi
 fi
 
