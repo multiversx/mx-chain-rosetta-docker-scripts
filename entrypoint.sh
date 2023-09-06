@@ -119,10 +119,10 @@ downloadNonPrunedEpochs() {
 
 # For Node (observer), perform additional steps
 if [[ ${PROGRAM} == "node" ]]; then
-    if [[ "${GENESIS}" = true ]]; then
+    if [[ "${IS_GENESIS}" = true ]]; then
         # Check non-existence of /data/db
         if [ -d "/data/db" ]; then
-            echo "Error: since GENESIS mode is set, make sure the directory /data/db does not exist." 1>&2
+            echo "Error: since IS_GENESIS is set, make sure the directory /data/db does not exist." 1>&2
             exit 1
         fi
     else
