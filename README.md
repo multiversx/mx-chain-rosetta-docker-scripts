@@ -1,16 +1,16 @@
-# rosetta-docker-scripts
+# rosetta-docker-content
 
-Scripts referenced by [Rosetta's Docker setup](https://github.com/multiversx/mx-chain-rosetta-docker). **Not usable in other contexts.**
+Files referenced by (copied into the) [Rosetta's Docker setup](https://github.com/multiversx/mx-chain-rosetta-docker). **Not usable in other contexts.**
 
-These scripts are kept separately (in this repository) so that we can easily use versioned references towards them, and also to satisfy Rosetta's [build anywhere](https://www.rosetta-api.org/docs/node_deployment.html#build-anywhere) requirement.
-
-## `adjust_config.py`
-
-This script is used to tailor the default Observer configuration. More precisely, it alters the files `config.toml` and `prefs.toml` accordingly and adjusts settings related to `DbLookupExtensions`, `Antiflood` etc.
+These files are kept separately from [mx-chain-rosetta-docker](https://github.com/multiversx/mx-chain-rosetta-docker) so that we can easily use versioned references towards them, and also to satisfy Rosetta's [build anywhere](https://docs.cloud.coinbase.com/rosetta/docs/docker-deployment#build-anywhere) requirement.
 
 ## `entrypoint.sh`
 
 This script should be used as the _entrypoint_ of Rosetta's [Dockerfile](https://github.com/multiversx/mx-chain-rosetta-docker/blob/main/Dockerfile). It starts the requested program (`node` or `rosetta`), with the provided arguments, and with the appropriate configuration.
+
+## `prefs.toml`
+
+A configuration file, used to override specific configuration entries of the Observer.
 
 ## Notable references
  - [Docker: How to execute a shell command before the ENTRYPOINT](https://stackoverflow.com/a/41518225)
